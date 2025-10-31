@@ -13,15 +13,22 @@ GitHubのプルリクエストページで、タイトルとリンクをSlack形
 1. このリポジトリをクローンまたはダウンロード
    ```bash
    git clone https://github.com/yourusername/copy-pull-request-title-with-link.git
+   cd copy-pull-request-title-with-link
    ```
 
-2. Chromeで `chrome://extensions/` を開く
+2. 依存関係をインストールしてビルド
+   ```bash
+   pnpm install
+   pnpm build
+   ```
 
-3. 右上の「デベロッパーモード」をONにする
+3. Chromeで `chrome://extensions/` を開く
 
-4. 「パッケージ化されていない拡張機能を読み込む」をクリック
+4. 右上の「デベロッパーモード」をONにする
 
-5. ダウンロードしたフォルダを選択
+5. 「パッケージ化されていない拡張機能を読み込む」をクリック
+
+6. プロジェクトの `dist` フォルダを選択
 
 ## 使い方
 
@@ -55,8 +62,50 @@ Slackでの表示: プルリクエストのタイトル（リンク付き）
 ## 技術スタック
 
 - Manifest V3
-- Vanilla JavaScript
+- TypeScript 5.x
+- @types/chrome（Chrome API の型定義）
+- pnpm（パッケージマネージャー）
 - CSS3
+
+## 開発
+
+### 必要な環境
+
+- Node.js (推奨: v18以上)
+- pnpm (推奨: v8以上)
+
+### ビルド
+
+```bash
+# 依存関係のインストール
+pnpm install
+
+# ビルド（TypeScript → JavaScript）
+pnpm build
+
+# ファイル変更の監視（開発時）
+pnpm watch
+
+# ビルド成果物のクリーンアップ
+pnpm clean
+```
+
+### ディレクトリ構造
+
+```
+copy-pull-request-title-with-link/
+├── src/                    # ソースコード
+│   ├── content.ts         # コンテンツスクリプト (TypeScript)
+│   ├── manifest.json      # 拡張機能のマニフェスト
+│   └── styles.css         # スタイルシート
+├── dist/                   # ビルド後の出力（Chrome拡張として読み込むディレクトリ）
+│   ├── content.js         # コンパイル後のJavaScript
+│   ├── manifest.json      # コピーされたマニフェスト
+│   └── styles.css         # コピーされたスタイルシート
+├── package.json           # プロジェクト設定
+├── tsconfig.json          # TypeScript設定
+└── pnpm-lock.yaml         # 依存関係のロックファイル
+```
 
 ## ライセンス
 

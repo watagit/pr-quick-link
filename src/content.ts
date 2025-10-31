@@ -1,10 +1,10 @@
 // プルリクエストページかどうかを確認
-function isPullRequestPage() {
-  return window.location.pathname.match(/^\/[^\/]+\/[^\/]+\/pull\/\d+/);
+function isPullRequestPage(): boolean {
+  return window.location.pathname.match(/^\/[^\/]+\/[^\/]+\/pull\/\d+/) !== null;
 }
 
 // コピーボタンを追加
-function addCopyButton() {
+function addCopyButton(): void {
   // 既にボタンが追加されている場合はスキップ
   if (document.querySelector('#pr-copy-button')) {
     return;
@@ -32,7 +32,7 @@ function addCopyButton() {
 
   // クリックイベント
   button.addEventListener('click', async () => {
-    const title = titleElement.textContent.trim();
+    const title = titleElement.textContent?.trim() || '';
     const url = window.location.href.split('#')[0]; // ハッシュを除去
     
     // URLからPR番号を抽出
@@ -66,7 +66,7 @@ function addCopyButton() {
   });
 
   // タイトルの親要素にボタンを追加
-  const titleContainer = titleElement.closest('.gh-header-title');
+  const titleContainer = titleElement.closest('.gh-header-title') as HTMLElement | null;
   if (titleContainer) {
     titleContainer.style.display = 'flex';
     titleContainer.style.alignItems = 'center';
@@ -76,7 +76,7 @@ function addCopyButton() {
 }
 
 // コピー成功のフィードバックを表示
-function showCopyFeedback(button) {
+function showCopyFeedback(button: HTMLButtonElement): void {
   const originalHTML = button.innerHTML;
   button.innerHTML = `
     <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" class="octicon" style="color: #2da44e;">
@@ -92,7 +92,7 @@ function showCopyFeedback(button) {
 }
 
 // コピー失敗のフィードバックを表示
-function showErrorFeedback(button) {
+function showErrorFeedback(button: HTMLButtonElement): void {
   const originalHTML = button.innerHTML;
   button.innerHTML = `
     <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" class="octicon" style="color: #cf222e;">
@@ -108,7 +108,7 @@ function showErrorFeedback(button) {
 }
 
 // ページ読み込み時とDOM変更時にボタンを追加
-function init() {
+function init(): void {
   if (isPullRequestPage()) {
     // 少し待ってからボタンを追加（DOMが完全に読み込まれるのを待つ）
     setTimeout(addCopyButton, 1000);
@@ -127,3 +127,4 @@ new MutationObserver(() => {
     init();
   }
 }).observe(document, { subtree: true, childList: true });
+

@@ -1,0 +1,23 @@
+{
+  "name": "copy-pull-request-title-with-link",
+  "version": "1.0.0",
+  "description": "GitHubのプルリクエストページで、タイトルとリンクをSlack形式でコピーできるChrome拡張機能",
+  "scripts": {
+    "build": "tsc && pnpm run copy-assets",
+    "copy-assets": "cp src/manifest.json dist/ && cp src/styles.css dist/",
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.270",
+    "typescript": "^5.6.0"
+  },
+  "keywords": [
+    "chrome-extension",
+    "github",
+    "slack",
+    "typescript"
+  ],
+  "author": "",
+  "license": "MIT"
+}

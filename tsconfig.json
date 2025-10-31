@@ -1,0 +1,47 @@
+{
+  "compilerOptions": {
+    /* 基本オプション */
+    "target": "ES2020",                          /* 出力するJavaScriptのバージョン */
+    "module": "ES2020",                          /* モジュールシステム */
+    "lib": ["ES2020", "DOM"],                    /* 使用するライブラリ */
+    
+    /* 厳密な型チェック */
+    "strict": true,                              /* 全ての厳密な型チェックを有効化 */
+    "noImplicitAny": true,                       /* 暗黙のany型を禁止 */
+    "strictNullChecks": true,                    /* nullとundefinedの厳密なチェック */
+    "strictFunctionTypes": true,                 /* 関数型の厳密なチェック */
+    "strictBindCallApply": true,                 /* bind, call, applyの厳密なチェック */
+    "strictPropertyInitialization": true,        /* クラスプロパティの初期化チェック */
+    "noImplicitThis": true,                      /* 暗黙のthisを禁止 */
+    "alwaysStrict": true,                        /* 常にuse strictを出力 */
+    
+    /* 追加のチェック */
+    "noUnusedLocals": true,                      /* 未使用のローカル変数を検出 */
+    "noUnusedParameters": true,                  /* 未使用のパラメータを検出 */
+    "noImplicitReturns": true,                   /* 暗黙のreturnを禁止 */
+    "noFallthroughCasesInSwitch": true,          /* switch文のフォールスルーを検出 */
+    
+    /* モジュール解決オプション */
+    "moduleResolution": "node",                  /* Node.js方式のモジュール解決 */
+    "esModuleInterop": true,                     /* CommonJSとESモジュールの互換性 */
+    "skipLibCheck": true,                        /* ライブラリの型定義チェックをスキップ */
+    "forceConsistentCasingInFileNames": true,    /* ファイル名の大文字小文字を厳密にチェック */
+    
+    /* 出力設定 */
+    "outDir": "./dist",                          /* 出力ディレクトリ */
+    "rootDir": "./src",                          /* ソースコードのルートディレクトリ */
+    "removeComments": false,                     /* コメントを残す */
+    "sourceMap": false,                          /* ソースマップを生成しない */
+    
+    /* 型定義 */
+    "types": ["chrome"]                          /* Chrome APIの型定義を使用 */
+  },
+  "include": [
+    "src/**/*"                                   /* src配下の全てのファイルをコンパイル対象 */
+  ],
+  "exclude": [
+    "node_modules",                              /* node_modulesを除外 */
+    "dist"                                       /* 出力ディレクトリを除外 */
+  ]
+}
+
