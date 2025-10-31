@@ -34,8 +34,15 @@ function addCopyButton() {
   button.addEventListener('click', async () => {
     const title = titleElement.textContent.trim();
     const url = window.location.href.split('#')[0]; // ハッシュを除去
-    const slackFormat = `<${url}|${title}>`;
-    const htmlFormat = `<a href="${url}">${title}</a>`;
+    
+    // URLからPR番号を抽出
+    const prNumber = url.match(/\/pull\/(\d+)/)?.[1];
+    
+    // タイトルにPR番号を追加
+    const titleWithNumber = prNumber ? `${title} #${prNumber}` : title;
+    
+    const slackFormat = `<${url}|${titleWithNumber}>`;
+    const htmlFormat = `<a href="${url}">${titleWithNumber}</a>`;
 
     try {
       // プレーンテキストとHTML形式の両方をクリップボードにコピー
