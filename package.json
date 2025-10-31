@@ -1,7 +1,7 @@
 {
-  "name": "copy-pull-request-title-with-link",
+  "name": "pr-quick-link",
   "version": "1.0.0",
-  "description": "GitHubのプルリクエストページで、タイトルとリンクをSlack形式でコピーできるChrome拡張機能",
+  "description": "GitHubのプルリクエストのタイトルとリンクを素早くコピーできるChrome拡張機能（Slack、Notion、Google Docsなどで使用可能）",
   "scripts": {
     "build": "tsc && pnpm run copy-assets",
     "copy-assets": "cp src/manifest.json dist/ && cp src/styles.css dist/",

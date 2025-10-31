@@ -1,19 +1,25 @@
-# Copy PR Title with Link
+# pr-quick-link
 
-GitHubのプルリクエストページで、タイトルとリンクをSlack形式でコピーできるChrome拡張機能です。
+GitHubのプルリクエストのタイトルとリンクを素早くコピーできるChrome拡張機能です。Slack、Notion、Google Docsなど、様々なツールで使用できます。
 
 ## 機能
 
 - GitHubのプルリクエストのタイトル横にコピーボタンを表示
-- ボタンをクリックすると、Slack形式 `<URL|タイトル>` でクリップボードにコピー
-- Slackにペーストすると、タイトルテキストにリンクが埋め込まれた状態で表示されます
+- ボタンをクリックすると、リッチテキスト形式でクリップボードにコピー
+- 以下のツールで**リンク付きテキスト**として貼り付け可能：
+  - **Slack**: `<URL|タイトル #番号>` 形式
+  - **Notion**: リンク付きテキストとして挿入
+  - **Google Docs**: リンク付きテキストとして挿入
+  - **Microsoft Word**: リンク付きテキストとして挿入
+  - **Gmail / Outlook**: リンク付きテキストとして挿入
+  - その他多くのリッチテキストエディタ
 
 ## インストール方法
 
 1. このリポジトリをクローンまたはダウンロード
    ```bash
-   git clone https://github.com/yourusername/copy-pull-request-title-with-link.git
-   cd copy-pull-request-title-with-link
+   git clone https://github.com/yourusername/pr-quick-link.git
+   cd pr-quick-link
    ```
 
 2. 依存関係をインストールしてビルド
@@ -34,13 +40,19 @@ GitHubのプルリクエストページで、タイトルとリンクをSlack形
 
 1. GitHubのプルリクエストページを開く
 2. タイトルの横にコピーボタン（📋アイコン）が表示されます
-3. ボタンをクリックすると、Slack形式でクリップボードにコピーされます
-4. Slackに貼り付けると、タイトルテキストにリンクが埋め込まれた状態で表示されます
+3. ボタンをクリックすると、リッチテキスト形式でクリップボードにコピーされます
+4. お好きなツール（Slack、Notion、Google Docsなど）に貼り付けると、リンク付きテキストとして表示されます
 
 例：
 ```
-コピーされる形式: <https://github.com/user/repo/pull/123|プルリクエストのタイトル>
-Slackでの表示: プルリクエストのタイトル（リンク付き）
+コピーされる内容:
+- プレーンテキスト: <https://github.com/user/repo/pull/123|プルリクエストのタイトル #123>
+- HTML: <a href="https://github.com/user/repo/pull/123">プルリクエストのタイトル #123</a>
+
+各ツールでの表示:
+- Slack: プルリクエストのタイトル #123（リンク付き）
+- Notion: プルリクエストのタイトル #123（リンク付き）
+- Google Docs: プルリクエストのタイトル #123（リンク付き）
 ```
 
 ## コピー成功の確認
@@ -112,7 +124,7 @@ pnpm test:ui
 ### ディレクトリ構造
 
 ```
-copy-pull-request-title-with-link/
+pr-quick-link/
 ├── src/                    # ソースコード
 │   ├── content.ts         # コンテンツスクリプト (TypeScript)
 │   ├── manifest.json      # 拡張機能のマニフェスト

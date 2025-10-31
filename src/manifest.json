@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Copy PR Title with Link",
+  "name": "pr-quick-link",
   "version": "1.0.0",
-  "description": "GitHub PRのタイトルをSlack形式のリンクとしてコピーできるChrome拡張機能",
+  "description": "GitHubのPRタイトルとリンクを素早くコピー（Slack、Notion、Google Docsなどで使用可能）",
   "permissions": [
     "clipboardWrite"
   ],

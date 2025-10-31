@@ -119,11 +119,17 @@ function init(): void {
 init();
 
 // SPAナビゲーションに対応（GitHubはSPAなので、ページ遷移を監視）
-let lastUrl = location.href;
-new MutationObserver(() => {
-  const url = location.href;
-  if (url !== lastUrl) {
-    lastUrl = url;
-    init();
-  }
-}).observe(document, { subtree: true, childList: true });
+// ブラウザ環境でのみ実行（テスト環境では location が未定義）
+if (typeof location !== 'undefined') {
+  let lastUrl = location.href;
+  new MutationObserver(() => {
+    // コールバック内でも location の存在をチェック
+    if (typeof location !== 'undefined') {
+      const url = location.href;
+      if (url !== lastUrl) {
+        lastUrl = url;
+        init();
+      }
+    }
+  }).observe(document, { subtree: true, childList: true });
+}
