@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { addCopyButton, isPullRequestPage, showCopyFeedback, showErrorFeedback } from './content';
 
 // ClipboardItemをグローバルにモック
 class MockClipboardItem {
@@ -26,8 +27,6 @@ Object.defineProperty(globalThis, 'location', {
   writable: true,
   configurable: true,
 });
-
-import { isPullRequestPage, addCopyButton, showCopyFeedback, showErrorFeedback } from './content';
 
 describe('isPullRequestPage', () => {
   beforeEach(() => {
