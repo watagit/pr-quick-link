@@ -20,6 +20,9 @@ importers:
       '@vitest/ui':
         specifier: ^4.0.5
         version: 4.0.5(vitest@4.0.5)
+      esbuild:
+        specifier: ^0.25.11
+        version: 0.25.11
       happy-dom:
         specifier: ^20.0.10
         version: 20.0.10
