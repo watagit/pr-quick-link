@@ -1,0 +1,45 @@
+/* コピーボタンのスタイル */
+#pr-copy-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid rgba(27, 31, 36, 0.15);
+  border-radius: 6px;
+  cursor: pointer;
+  color: #57606a;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+}
+
+#pr-copy-button:hover {
+  background-color: rgba(175, 184, 193, 0.2);
+  border-color: rgba(27, 31, 36, 0.25);
+}
+
+#pr-copy-button:active {
+  background-color: rgba(175, 184, 193, 0.3);
+  transform: scale(0.95);
+}
+
+#pr-copy-button svg {
+  fill: currentColor;
+}
+
+/* ダークモード対応 */
+@media (prefers-color-scheme: dark) {
+  #pr-copy-button {
+    border-color: rgba(240, 246, 252, 0.1);
+    color: #8b949e;
+  }
+
+  #pr-copy-button:hover {
+    background-color: rgba(177, 186, 196, 0.12);
+    border-color: rgba(240, 246, 252, 0.2);
+  }
+
+  #pr-copy-button:active {
+    background-color: rgba(177, 186, 196, 0.2);
+  }
+}
