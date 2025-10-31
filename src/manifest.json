@@ -3,6 +3,11 @@
   "name": "pr-quick-link",
   "version": "1.0.0",
   "description": "GitHubのPRタイトルとリンクを素早くコピー（Slack、Notion、Google Docsなどで使用可能）",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
   "permissions": [
     "clipboardWrite"
   ],
