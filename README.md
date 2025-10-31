@@ -65,6 +65,7 @@ Slackでの表示: プルリクエストのタイトル（リンク付き）
 - TypeScript 5.x
 - @types/chrome（Chrome API の型定義）
 - pnpm（パッケージマネージャー）
+- Vitest（テストフレームワーク）
 - CSS3
 
 ## 開発
@@ -89,6 +90,24 @@ pnpm watch
 # ビルド成果物のクリーンアップ
 pnpm clean
 ```
+
+### テスト
+
+```bash
+# テストの実行（watch モード）
+pnpm test
+
+# テストの実行（1回のみ）
+pnpm test:run
+
+# テストカバレッジの確認
+pnpm test:coverage
+
+# テストUIの起動
+pnpm test:ui
+```
+
+プロジェクトは [Vitest](https://vitest.dev/) を使用してテストしています。
 
 ### ディレクトリ構造
 

@@ -1,10 +1,10 @@
 // プルリクエストページかどうかを確認
-function isPullRequestPage(): boolean {
-  return window.location.pathname.match(/^\/[^\/]+\/[^\/]+\/pull\/\d+/) !== null;
+export function isPullRequestPage(): boolean {
+  return window.location.pathname.match(/^\/[^/]+\/[^/]+\/pull\/\d+/) !== null;
 }
 
 // コピーボタンを追加
-function addCopyButton(): void {
+export function addCopyButton(): void {
   // 既にボタンが追加されている場合はスキップ
   if (document.querySelector('#pr-copy-button')) {
     return;
@@ -12,7 +12,7 @@ function addCopyButton(): void {
 
   // タイトル要素を探す（GitHubのDOM構造に依存）
   const titleElement = document.querySelector('.gh-header-title .js-issue-title');
-  
+
   if (!titleElement) {
     return;
   }
@@ -34,13 +34,13 @@ function addCopyButton(): void {
   button.addEventListener('click', async () => {
     const title = titleElement.textContent?.trim() || '';
     const url = window.location.href.split('#')[0]; // ハッシュを除去
-    
+
     // URLからPR番号を抽出
     const prNumber = url.match(/\/pull\/(\d+)/)?.[1];
-    
+
     // タイトルにPR番号を追加
     const titleWithNumber = prNumber ? `${title} #${prNumber}` : title;
-    
+
     const slackFormat = `<${url}|${titleWithNumber}>`;
     const htmlFormat = `<a href="${url}">${titleWithNumber}</a>`;
 
@@ -48,7 +48,7 @@ function addCopyButton(): void {
       // プレーンテキストとHTML形式の両方をクリップボードにコピー
       const clipboardItem = new ClipboardItem({
         'text/plain': new Blob([slackFormat], { type: 'text/plain' }),
-        'text/html': new Blob([htmlFormat], { type: 'text/html' })
+        'text/html': new Blob([htmlFormat], { type: 'text/html' }),
       });
       await navigator.clipboard.write([clipboardItem]);
       showCopyFeedback(button);
@@ -76,7 +76,7 @@ function addCopyButton(): void {
 }
 
 // コピー成功のフィードバックを表示
-function showCopyFeedback(button: HTMLButtonElement): void {
+export function showCopyFeedback(button: HTMLButtonElement): void {
   const originalHTML = button.innerHTML;
   button.innerHTML = `
     <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" class="octicon" style="color: #2da44e;">
@@ -84,7 +84,7 @@ function showCopyFeedback(button: HTMLButtonElement): void {
     </svg>
   `;
   button.style.color = '#2da44e';
-  
+
   setTimeout(() => {
     button.innerHTML = originalHTML;
     button.style.color = '';
@@ -92,7 +92,7 @@ function showCopyFeedback(button: HTMLButtonElement): void {
 }
 
 // コピー失敗のフィードバックを表示
-function showErrorFeedback(button: HTMLButtonElement): void {
+export function showErrorFeedback(button: HTMLButtonElement): void {
   const originalHTML = button.innerHTML;
   button.innerHTML = `
     <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" class="octicon" style="color: #cf222e;">
@@ -100,7 +100,7 @@ function showErrorFeedback(button: HTMLButtonElement): void {
     </svg>
   `;
   button.style.color = '#cf222e';
-  
+
   setTimeout(() => {
     button.innerHTML = originalHTML;
     button.style.color = '';
@@ -127,4 +127,3 @@ new MutationObserver(() => {
     init();
   }
 }).observe(document, { subtree: true, childList: true });
-

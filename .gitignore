@@ -29,3 +29,6 @@ yarn-error.log*
 
 # TypeScript cache
 *.tsbuildinfo
+
+# Test coverage
+coverage/
