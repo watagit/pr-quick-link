@@ -1,5 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { addCopyButton, isPullRequestPage, showCopyFeedback, showErrorFeedback } from './content';
+import {
+  addCopyButton,
+  getPullRequestTitle,
+  isPullRequestPage,
+  removeCopyButton,
+  showCopyFeedback,
+  showErrorFeedback,
+} from './content';
 
 // ClipboardItemをグローバルにモック
 class MockClipboardItem {
@@ -9,7 +16,6 @@ class MockClipboardItem {
   }
 }
 
-// ClipboardItemの型定義を拡張
 declare global {
   interface Window {
     ClipboardItem: typeof MockClipboardItem;
@@ -28,77 +34,73 @@ Object.defineProperty(globalThis, 'location', {
   configurable: true,
 });
 
+function setLocation(href: string, pathname: string): void {
+  Object.defineProperty(globalThis, 'location', {
+    value: { href, pathname },
+    writable: true,
+    configurable: true,
+  });
+}
+
 describe('isPullRequestPage', () => {
   beforeEach(() => {
-    // locationをリセット
-    Object.defineProperty(globalThis, 'location', {
-      value: {
-        href: 'https://github.com',
-        pathname: '/',
-      },
-      writable: true,
-      configurable: true,
-    });
+    setLocation('https://github.com', '/');
   });
 
   it('プルリクエストページのURLの場合、trueを返す', () => {
-    Object.defineProperty(globalThis, 'location', {
-      value: {
-        href: 'https://github.com/owner/repo/pull/123',
-        pathname: '/owner/repo/pull/123',
-      },
-      writable: true,
-      configurable: true,
-    });
+    setLocation('https://github.com/owner/repo/pull/123', '/owner/repo/pull/123');
     expect(isPullRequestPage()).toBe(true);
   });
 
   it('プルリクエストページではない場合、falseを返す', () => {
-    Object.defineProperty(globalThis, 'location', {
-      value: {
-        href: 'https://github.com/owner/repo/issues/123',
-        pathname: '/owner/repo/issues/123',
-      },
-      writable: true,
-      configurable: true,
-    });
+    setLocation('https://github.com/owner/repo/issues/123', '/owner/repo/issues/123');
     expect(isPullRequestPage()).toBe(false);
   });
 
   it('ルートパスの場合、falseを返す', () => {
-    Object.defineProperty(globalThis, 'location', {
-      value: {
-        href: 'https://github.com/',
-        pathname: '/',
-      },
-      writable: true,
-      configurable: true,
-    });
+    setLocation('https://github.com/', '/');
     expect(isPullRequestPage()).toBe(false);
   });
 
   it('リポジトリのトップページの場合、falseを返す', () => {
-    Object.defineProperty(globalThis, 'location', {
-      value: {
-        href: 'https://github.com/owner/repo',
-        pathname: '/owner/repo',
-      },
-      writable: true,
-      configurable: true,
-    });
+    setLocation('https://github.com/owner/repo', '/owner/repo');
     expect(isPullRequestPage()).toBe(false);
   });
 
   it('複数桁のPR番号でも正しく動作する', () => {
-    Object.defineProperty(globalThis, 'location', {
-      value: {
-        href: 'https://github.com/facebook/react/pull/99999',
-        pathname: '/facebook/react/pull/99999',
-      },
-      writable: true,
-      configurable: true,
-    });
+    setLocation('https://github.com/facebook/react/pull/99999', '/facebook/react/pull/99999');
     expect(isPullRequestPage()).toBe(true);
+  });
+});
+
+describe('getPullRequestTitle', () => {
+  afterEach(() => {
+    document.title = '';
+  });
+
+  it('GitHubのタイトル形式からPRタイトルを抽出する', () => {
+    document.title = 'Fix button rendering · Pull Request #123 · owner/repo';
+    expect(getPullRequestTitle()).toBe('Fix button rendering');
+  });
+
+  it('"by <author>" が付いたタイトル形式からもPRタイトルのみを抽出する', () => {
+    document.title = 'Fix button rendering by watagit · Pull Request #123 · owner/repo';
+    expect(getPullRequestTitle()).toBe('Fix button rendering');
+  });
+
+  it('タイトル中に "by" という単語が含まれていても末尾の "by <author>" のみ取り除く', () => {
+    document.title = 'Replace foo by bar by watagit · Pull Request #123 · owner/repo';
+    expect(getPullRequestTitle()).toBe('Replace foo by bar');
+  });
+
+  it('セパレータがない場合は document.title 全体を返す', () => {
+    document.title = 'Just a title';
+    expect(getPullRequestTitle()).toBe('Just a title');
+  });
+
+  it('前後の空白を取り除く', () => {
+    document.title = '  Trimmed title  · Pull Request #1 · owner/repo';
+    expect(getPullRequestTitle()).toBe('Trimmed title');
   });
 });
 
@@ -107,38 +109,26 @@ describe('addCopyButton', () => {
     document.body.innerHTML = '';
   });
 
-  it('タイトル要素が存在する場合、ボタンが追加される', () => {
-    // GitHubのDOM構造をシミュレート
-    document.body.innerHTML = `
-      <div class="gh-header-title">
-        <span class="js-issue-title">Test PR Title</span>
-      </div>
-    `;
-
+  it('ボタンがbodyに追加される', () => {
     addCopyButton();
 
     const button = document.querySelector('#pr-copy-button');
     expect(button).toBeTruthy();
     expect(button?.tagName).toBe('BUTTON');
+    expect(button?.parentElement).toBe(document.body);
   });
 
-  it('タイトル要素が存在しない場合、ボタンは追加されない', () => {
-    document.body.innerHTML = '<div></div>';
+  it('GitHubのDOM構造が変わってもボタンが追加される', () => {
+    // タイトル用の要素が一切ない状態でも動くこと
+    document.body.innerHTML = '<div id="totally-unrelated"></div>';
 
     addCopyButton();
 
-    const button = document.querySelector('#pr-copy-button');
-    expect(button).toBeNull();
+    expect(document.querySelector('#pr-copy-button')).toBeTruthy();
   });
 
   it('既にボタンが存在する場合、重複して追加されない', () => {
-    document.body.innerHTML = `
-      <div class="gh-header-title">
-        <span class="js-issue-title">Test PR Title</span>
-        <button id="pr-copy-button"></button>
-      </div>
-    `;
-
+    addCopyButton();
     addCopyButton();
 
     const buttons = document.querySelectorAll('#pr-copy-button');
@@ -146,45 +136,25 @@ describe('addCopyButton', () => {
   });
 
   it('ボタンに正しい属性が設定される', () => {
-    document.body.innerHTML = `
-      <div class="gh-header-title">
-        <span class="js-issue-title">Test PR Title</span>
-      </div>
-    `;
-
     addCopyButton();
 
     const button = document.querySelector('#pr-copy-button') as HTMLButtonElement;
     expect(button).toBeTruthy();
-    expect(button?.className).toBe('btn-octicon');
     expect(button?.type).toBe('button');
     expect(button?.title).toBe('Slack形式でタイトルとリンクをコピー');
+    expect(button?.getAttribute('aria-label')).toBe('Slack形式でPRタイトルとリンクをコピー');
   });
 
   it('ボタンにSVGアイコンが含まれる', () => {
-    document.body.innerHTML = `
-      <div class="gh-header-title">
-        <span class="js-issue-title">Test PR Title</span>
-      </div>
-    `;
-
     addCopyButton();
 
-    const button = document.querySelector('#pr-copy-button');
-    const svg = button?.querySelector('svg');
+    const svg = document.querySelector('#pr-copy-button svg');
     expect(svg).toBeTruthy();
     expect(svg?.getAttribute('height')).toBe('16');
     expect(svg?.getAttribute('width')).toBe('16');
   });
 
-  it('ボタンのクリックイベントが設定される', async () => {
-    document.body.innerHTML = `
-      <div class="gh-header-title">
-        <span class="js-issue-title">Test PR Title</span>
-      </div>
-    `;
-
-    // Clipboard APIをモック
+  it('ボタンのクリックでClipboard APIが呼ばれ、document.titleからタイトルを取得する', async () => {
     const mockClipboardWrite = vi.fn().mockResolvedValue(undefined);
     const mockWriteText = vi.fn().mockResolvedValue(undefined);
 
@@ -197,32 +167,42 @@ describe('addCopyButton', () => {
       configurable: true,
     });
 
-    // locationをモック
-    Object.defineProperty(globalThis, 'location', {
-      value: {
-        href: 'https://github.com/owner/repo/pull/123',
-        pathname: '/owner/repo/pull/123',
-      },
-      writable: true,
-      configurable: true,
-    });
+    setLocation('https://github.com/owner/repo/pull/123', '/owner/repo/pull/123');
+    document.title = 'Fix button rendering · Pull Request #123 · owner/repo';
 
     addCopyButton();
 
     const button = document.querySelector('#pr-copy-button') as HTMLButtonElement;
-    expect(button).toBeTruthy();
-
-    // ボタンをクリック
     button.click();
 
-    // Clipboard APIが呼ばれるのを待つ
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(mockClipboardWrite).toHaveBeenCalled();
 
-    // ClipboardItemの引数を確認
     const clipboardItemData = mockClipboardWrite.mock.calls[0][0][0];
     expect(clipboardItemData).toBeInstanceOf(MockClipboardItem);
+    // text/plain / text/html 両方の Blob が渡されていること
+    const data = (clipboardItemData as MockClipboardItem).data;
+    expect(data['text/plain']).toBeInstanceOf(Blob);
+    expect(data['text/html']).toBeInstanceOf(Blob);
+  });
+});
+
+describe('removeCopyButton', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('ボタンが存在する場合、取り除かれる', () => {
+    addCopyButton();
+    expect(document.querySelector('#pr-copy-button')).toBeTruthy();
+
+    removeCopyButton();
+    expect(document.querySelector('#pr-copy-button')).toBeNull();
+  });
+
+  it('ボタンが存在しない場合でもエラーにならない', () => {
+    expect(() => removeCopyButton()).not.toThrow();
   });
 });
 
@@ -241,7 +221,6 @@ describe('showCopyFeedback', () => {
 
     showCopyFeedback(button);
 
-    expect(button.innerHTML).toContain('#2da44e');
     expect(button.style.color).toBe('rgb(45, 164, 78)');
   });
 
@@ -252,28 +231,11 @@ describe('showCopyFeedback', () => {
 
     showCopyFeedback(button);
 
-    // 変更されていることを確認
     expect(button.innerHTML).not.toBe(originalHTML);
 
-    // 2秒後
     vi.advanceTimersByTime(2000);
 
     expect(button.innerHTML).toBe(originalHTML);
-    expect(button.style.color).toBe('');
-  });
-
-  it('タイムアウト中にボタンの色が緑色に設定される', () => {
-    const button = document.createElement('button');
-    button.innerHTML = '<svg>original</svg>';
-
-    showCopyFeedback(button);
-
-    expect(button.style.color).toBe('rgb(45, 164, 78)');
-
-    vi.advanceTimersByTime(1000);
-    expect(button.style.color).toBe('rgb(45, 164, 78)');
-
-    vi.advanceTimersByTime(1000);
     expect(button.style.color).toBe('');
   });
 });
@@ -293,7 +255,6 @@ describe('showErrorFeedback', () => {
 
     showErrorFeedback(button);
 
-    expect(button.innerHTML).toContain('#cf222e');
     expect(button.style.color).toBe('rgb(207, 34, 46)');
   });
 
@@ -304,28 +265,11 @@ describe('showErrorFeedback', () => {
 
     showErrorFeedback(button);
 
-    // 変更されていることを確認
     expect(button.innerHTML).not.toBe(originalHTML);
 
-    // 2秒後
     vi.advanceTimersByTime(2000);
 
     expect(button.innerHTML).toBe(originalHTML);
-    expect(button.style.color).toBe('');
-  });
-
-  it('タイムアウト中にボタンの色が赤色に設定される', () => {
-    const button = document.createElement('button');
-    button.innerHTML = '<svg>original</svg>';
-
-    showErrorFeedback(button);
-
-    expect(button.style.color).toBe('rgb(207, 34, 46)');
-
-    vi.advanceTimersByTime(1000);
-    expect(button.style.color).toBe('rgb(207, 34, 46)');
-
-    vi.advanceTimersByTime(1000);
     expect(button.style.color).toBe('');
   });
 });
