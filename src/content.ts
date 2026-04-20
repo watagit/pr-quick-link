@@ -4,15 +4,14 @@ export function isPullRequestPage(): boolean {
 }
 
 // document.title から PR タイトルを取り出す
-// GitHub のタイトル形式: "<タイトル> · Pull Request #<番号> · <owner>/<repo>"
-// フォールバックとして h1/title をそのまま返す
+// GitHub のタイトル形式: "<タイトル> by <author> · Pull Request #<番号> · <owner>/<repo>"
+// (古い GitHub では "by <author>" が付かない場合もあるため両対応する)
 export function getPullRequestTitle(): string {
   const raw = document.title.trim();
   const separatorIndex = raw.indexOf(' · ');
-  if (separatorIndex > 0) {
-    return raw.slice(0, separatorIndex).trim();
-  }
-  return raw;
+  const head = separatorIndex > 0 ? raw.slice(0, separatorIndex) : raw;
+  // 末尾の " by <username>" を取り除く (GitHubのusernameに空白は含まれない)
+  return head.replace(/\s+by\s+\S+$/, '').trim();
 }
 
 const COPY_ICON_SVG = `

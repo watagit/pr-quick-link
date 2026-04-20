@@ -83,6 +83,16 @@ describe('getPullRequestTitle', () => {
     expect(getPullRequestTitle()).toBe('Fix button rendering');
   });
 
+  it('"by <author>" が付いたタイトル形式からもPRタイトルのみを抽出する', () => {
+    document.title = 'Fix button rendering by watagit · Pull Request #123 · owner/repo';
+    expect(getPullRequestTitle()).toBe('Fix button rendering');
+  });
+
+  it('タイトル中に "by" という単語が含まれていても末尾の "by <author>" のみ取り除く', () => {
+    document.title = 'Replace foo by bar by watagit · Pull Request #123 · owner/repo';
+    expect(getPullRequestTitle()).toBe('Replace foo by bar');
+  });
+
   it('セパレータがない場合は document.title 全体を返す', () => {
     document.title = 'Just a title';
     expect(getPullRequestTitle()).toBe('Just a title');
