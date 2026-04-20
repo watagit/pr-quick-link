@@ -80,6 +80,13 @@ GitHubのプルリクエストのタイトルとリンクを素早くコピー�
 
 ### 開発環境のセットアップ
 
+Node.js と pnpm のバージョン管理には [mise](https://mise.jdx.dev/) を使用しています。`mise.toml` に必要なバージョンが定義されているため、以下のコマンドでツールをインストールできます。
+
+```bash
+# Node.js と pnpm をインストール
+mise install
+```
+
 ```bash
 # 依存関係のインストール
 pnpm install
