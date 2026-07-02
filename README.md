@@ -19,7 +19,7 @@ GitHubのプルリクエストのタイトルとリンクを素早くコピー�
 
 1. このリポジトリをクローンまたはダウンロード
    ```bash
-   git clone https://github.com/yourusername/pr-quick-link.git
+   git clone https://github.com/watagit/pr-quick-link.git
    cd pr-quick-link
    ```
 
